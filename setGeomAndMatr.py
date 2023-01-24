@@ -4,7 +4,7 @@ import numpy as np
 import json
 
 # set work directory to store generated files from this script
-workdir = os.path.join(os.environ['ropemodels'], 'scripts/JiangModelForKW17S_393')
+workdir = os.path.join(os.environ['ropemodels'], 'scripts', 'JiangModelForKW17S_393')
 
 # geometrical aspect of the model
 design = "17S_393mm_LF9Pt1"             # name of the design
@@ -16,7 +16,7 @@ phaseAngle = np.array([0, 0, 0.5 * (2 * np.pi) / 8.])  # phase angle of starting
 wireLayLength = 35.8                    # !unique for all wires
 thickness = 0.1                         # thickness of the basic sector
 
-seedSpacing = meshSize = 0.05           # resolution of discretizing elliptical wire profile
+seedSpacing = meshSize = 0.02           # resolution of discretizing elliptical wire profile
 print('-'*10)
 for (i, d) in enumerate(dWiresExp):
     print('Circumference of wire in layer: ' + str(i) + ' is discretized using ' + str(np.ceil(np.pi*d/seedSpacing)) + '.')
@@ -27,7 +27,7 @@ orientOfL1 = 0.0
 orientOfL2 = np.pi/8.0
 
 # designate material properties, designate path to folder of wire properties
-PathFolderExpData = os.path.join(os.environ['ropemodels'], 'scripts/JiangModelForKW17S_393/wireMatProp')
+PathFolderExpData = os.path.join(os.environ['ropemodels'], 'scripts', 'JiangModelForKW17S_393', 'wireMatProp')
 Filei = [
     "lay0CalibatedMaterial.json",  # wire of 1st layer
     "lay1CalibatedMaterial.json",  # wire of 2nd layer
@@ -141,7 +141,7 @@ json.dump(basicSectorDict, a_file)
 a_file.close()
 
 b_file = open(os.path.join(workdir, 'setL1L2ForProfileOfBasicSectorBeforeCompaction.json'), 'w')
-json.dump(basicSectorDict, b_file)
+json.dump(L1L2DesignateDict, b_file)
 b_file.close()
 
 
