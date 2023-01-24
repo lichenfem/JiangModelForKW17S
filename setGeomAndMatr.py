@@ -15,6 +15,7 @@ rWiresPerLayer = 0.5 * dWiresExp        # radius of wires of each layer
 phaseAngle = np.array([0, 0, 0.5 * (2 * np.pi) / 8.])  # phase angle of starting wire of each layer
 wireLayLength = 35.8                    # !unique for all wires
 thickness = 0.1                         # thickness of the basic sector
+wireLayDirection = 1                    # 1 for right hand lay, -1 for left hand lay
 
 seedSpacing = meshSize = 0.02           # resolution of discretizing elliptical wire profile
 print('-'*10)
@@ -71,7 +72,7 @@ strand = StrandData(1.0,                    # nLays
                     strandLayRadius=0.0,
                     strandLayLength=np.inf,             # !inf for central strand
                     strandLayDirection=1,
-                    wireLayDirection=[],                # lay directions of the wires, default right lay
+                    wireLayDirection=wireLayDirection,                # lay directions of the wires, default right lay
                     onlyConstructData=1,                # not using abaqus modules
                     strandLayer=0,
                     strandIndexInStrandLayer=0,
@@ -105,6 +106,7 @@ settings['rWiresPerLayer'] = rWiresPerLayer.tolist()
 settings['phaseAngle'] = phaseAngle.tolist()
 settings['wireLayLength'] = wireLayLength
 settings['wireLayRadii'] = wireLayRadii.tolist()
+settings['wireLayDirection'] = wireLayDirection
 settings['meshSize'] = meshSize
 settings['orientOfL1'] = orientOfL1
 settings['orientOfL2'] = orientOfL2
