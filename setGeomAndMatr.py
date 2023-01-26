@@ -15,7 +15,7 @@ rWiresPerLayer = 0.5 * dWiresExp        # radius of wires of each layer
 phaseAngle = np.array([0, 0, 0.5 * (2 * np.pi) / 8.])  # phase angle of starting wire of each layer
 wireLayLength = 35.8                    # !unique for all wires
 thickness = 0.1                         # thickness of the basic sector
-wireLayDirection = 1                    # 1 for right hand lay, -1 for left hand lay
+wireLayDirection = [1 for i in range(nLayers)]                    # 1 for right hand lay, -1 for left hand lay
 
 seedSpacing = meshSize = 0.02           # resolution of discretizing elliptical wire profile
 print('-'*10)
