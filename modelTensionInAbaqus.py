@@ -5,13 +5,10 @@ import numpy as np
 import time
 
 
-def genInpForCompactionSimu(settingJson):
+def genInpForTensionSimu(settingJson):
     """
-
+    generate inp file for tension simulation
     @param settingJson: str, path of setting file
-    @param ellipticWireProfileJson: str, path of json file storing elliptical profiles for all wires in the strand
-    @param partialEllipticWireProfileInBasicSectorJson: str, path of json file storing elliptical profiles only for wires
-                                                        in the basic sector
     @return: none
     """
     # loading settings
@@ -21,12 +18,12 @@ def genInpForCompactionSimu(settingJson):
 
     # create necessary folder if required
     try:
-        os.mkdir(os.path.join(settings['workdir'], 'compaction'))
-    except:
+        os.mkdir(os.path.join(settings['workdir'], 'tension'))
+    except Exception:
         pass
     try:
-        os.mkdir(os.path.join(settings['workdir'], 'compaction', 'debugDataFiles'))
-    except:
+        os.mkdir(os.path.join(settings['workdir'], 'tension', 'debugDataFiles'))
+    except Exception:
         pass
 
     # create list of materials
@@ -38,22 +35,25 @@ def genInpForCompactionSimu(settingJson):
 
     # set loading controls
     from source.classes.StaticLoading import StaticLoading
-    loading = StaticLoading(typeOfLoadingApplied='compaction',
+    loading = StaticLoading(typeOfLoadingApplied='tension',
                             minInc=1e-8,
                             maxInc=0.05,
                             initialInc=1e-3,    # preset
-                            targetRadialStrain=settings['targetRadialStrain'],
+                            targetAxialStrain=settings['targetAxialStrain'],
                             )
 
     # create strand object
-    wireProfilesJsonFileForCompact = os.path.join(settings['workdir'], 'profileOfBasicSectorBeforeCompaction.json')
-    jsonFileForL1L2OfRedudcedModel = os.path.join(settings['workdir'],'setL1L2ForProfileOfBasicSectorBeforeCompaction.json')
-    a_file = open(wireProfilesJsonFileForCompact, 'r')
-    basicSectorDict = json.load(a_file)  # output is a dict
+    wireProfilesJsonFile = os.path.join(settings['workdir'], 'profileOfBasicSectorAfterCompaction.json')
+    hardIniUserSubroutine = os.path.join(settings['workdir'], 'hardini_partialSec.f')
+    wireProfilesJsonFileForCompact = ''
+    jsonFileForL1L2OfRedudcedModel = os.path.join(settings['workdir'],'setL1L2ForProfileOfBasicSectorAfterCompaction.json')
+    #
+    a_file = open(wireProfilesJsonFile, 'r')
+    basicSectorDict = json.load(a_file)     # load profile of basic sector
     a_file.close()
     #
     a_file = open(jsonFileForL1L2OfRedudcedModel, 'r')
-    L1L2DesignateDict = json.load(a_file)  # output is a dict
+    L1L2DesignateDict = json.load(a_file)   # load L1/L2 labels of nodes
     a_file.close()
 
 
@@ -71,22 +71,13 @@ def genInpForCompactionSimu(settingJson):
                                     L1L2DesignateDict=L1L2DesignateDict,
                                     )
 
-    # create compaction ring
-    from source.classes.CompactionDie import CompactionDie
-    compactionDie = CompactionDie(DieDiameter=basicSector.diameter * (1 - loading.targetRadialStrain),
-                                  StraightStrand=basicSector,
-                                  FrictCoeff=0.0,                                     # frictionless between ring and wire
-                                  Overclosure=0.0 * min(settings['rWiresPerLayer']),  # user defined overlap
-                                  inclRelaxStep=False,      # no relaxation
-                                  )
-
     # create SimulationSetup object
     launchJob = 0
     useBeams = 0
     elementCode = 'C3D8'
     jobName = loading.typeOfLoadingApplied
     curveName = jobName
-    workDir = os.path.join(settings['workdir'], 'compaction')   # must be absolute path
+    workDir = os.path.join(settings['workdir'], 'tension')   # must be absolute path
     postProcess = 0
     generateSimImages = 0
     #
@@ -104,9 +95,6 @@ def genInpForCompactionSimu(settingJson):
     constructGeometryMethod = 'reducedModelOfJiang'
     dynamic = 'static'
     meshCtrl = {'meshSize': settings['meshSize']}       # set mesh density
-    #
-    wireProfilesJsonFile = ''
-    hardIniUserSubroutine = ''
 
 
     from source.classes.SimulationSetup import SimulationSetup
@@ -141,12 +129,12 @@ def genInpForCompactionSimu(settingJson):
         penaltyType=penaltyType,
         constructGeometryMethod=constructGeometryMethod,
         dynamic=dynamic,
-        compactionDie=compactionDie,
+        compactionDie=None,     # no compaction ring
         wireProfilesJsonFileForCompact=wireProfilesJsonFileForCompact,
         wireProfilesJsonFile=wireProfilesJsonFile,
         hardIniUserSubroutine=hardIniUserSubroutine,
         jsonFileForL1L2OfRedudcedModel=jsonFileForL1L2OfRedudcedModel,
-        folderToStoreDebugDataFiles=os.path.join(settings['workdir'], 'compaction', 'debugDataFiles'),   # folder to store files generated for debugging purposes
+        folderToStoreDebugDataFiles=os.path.join(settings['workdir'], 'tension', 'debugDataFiles'),   # folder to store files generated for debugging purposes
         constraintSchemeOfReducedModel='jiang',
         useBalancedContactBetweenWires=True,
         **meshCtrl
@@ -169,8 +157,11 @@ def genInpForCompactionSimu(settingJson):
 
     return
 
-# ------------------------------------------------------------
+# -------------------------------------------------------------------------
 if __name__ == '__main__':
-    import sys
-    genInpForCompactionSimu(settingJson=sys.argv[-1])
 
+    try:
+        import sys
+        genInpForTensionSimu(settingJson=sys.argv[-1])
+    except Exception:
+        settingJson = os.path.join(os.getcwd(), 'configuration.json')

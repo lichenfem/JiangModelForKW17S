@@ -17,7 +17,7 @@ wireLayLength = 35.8                    # !unique for all wires
 thickness = 0.1                         # thickness of the basic sector
 wireLayDirection = [1 for i in range(nLayers)]                    # 1 for right hand lay, -1 for left hand lay
 
-seedSpacing = meshSize = 0.02           # resolution of discretizing elliptical wire profile
+seedSpacing = meshSize = 0.03           # resolution of discretizing elliptical wire profile
 print('-'*10)
 for (i, d) in enumerate(dWiresExp):
     print('Circumference of wire in layer: ' + str(i) + ' is discretized using ' + str(np.ceil(np.pi*d/seedSpacing)) + '.')

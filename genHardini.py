@@ -16,8 +16,10 @@ def genPEEQField(csvFileNamePEEQ, settingJson, hardiniPath='hardini_partialSec.f
     from source.postProcessing.compactionPostprocess import plotPeeqPtCloudData
     ax0 = plotPeeqPtCloudData(data=np.array(xyzPeeqOnBasicSec, dtype=float))       # visualize contour
     ax0.set_title(r'Field of PEEQ in deformed shape')
+    plt.close('all')
     ax1 = plotPeeqPtCloudData(data=np.array(x0y0z0PeeqOnBasicSec, dtype=float))       # visualize contour
     ax1.set_title(r'Field of PEEQ in undeformed shape')
+    plt.close('all')
 
     # group integration points based on z coordinates
     from sklearn.cluster import dbscan
@@ -33,6 +35,7 @@ def genPEEQField(csvFileNamePEEQ, settingJson, hardiniPath='hardini_partialSec.f
     # filter a single layer of element
     xyPeeqOnBasicSec = [[line[0], line[1], line[-1]] for (line, id) in zip(xyzPeeqOnBasicSec, cluster_ids) if id == chosenClusterID]
     ax2 = plotPeeqPtCloudData(data=np.array(xyPeeqOnBasicSec, dtype=float))  # for tension simulation using Jiang's reduced model
+    plt.close('all')
 
     # #----------------------following part of script replicate the PEEQ field for whole strand section-----------------------
     # # get the layer of integration point closer to z = 0
