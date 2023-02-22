@@ -4,20 +4,20 @@ import numpy as np
 import json
 
 # set work directory to store generated files from this script
-workdir = os.path.join(os.environ['ropemodels'], 'scripts', 'JiangModelForKW17S_393')
+workdir = os.path.join(os.environ['ropemodels'], 'scripts', 'JiangModelForKW17S')
 
 # geometrical aspect of the model
-design = "17S_393mm_LF9Pt1"             # name of the design
+design = "bms17S_cmp0d0pct_lf9d5"             # name of the design
 nLayers = 3                             # number of layers
 nWiresPerLayer = np.array([1, 8, 8])    # number of wires per layer (innermost to outmost)
-dWiresExp = np.array([0.939, 0.567, 1.035])  # diameters of wires of each layer from experimental data
+dWiresExp = np.array([1.204, 0.721, 1.323])  # diameters of wires of each layer from experimental data
 rWiresPerLayer = 0.5 * dWiresExp        # radius of wires of each layer
-phaseAngle = np.array([0, 0, 0.5 * (2 * np.pi) / 8.])  # phase angle of starting wire of each layer
-wireLayLength = 35.8                    # !unique for all wires
+phaseAngle = np.array([0, 0, np.pi/8.0])  # phase angle of starting wire of each layer
+wireLayLength = 47.2                    # !unique for all wires
 thickness = 0.1                         # thickness of the basic sector
 wireLayDirection = [1 for i in range(nLayers)]                    # 1 for right hand lay, -1 for left hand lay
 
-seedSpacing = meshSize = 0.03           # resolution of discretizing elliptical wire profile
+seedSpacing = meshSize = 0.05           # resolution of discretizing elliptical wire profile
 print('-'*10)
 for (i, d) in enumerate(dWiresExp):
     print('Circumference of wire in layer: ' + str(i) + ' is discretized using ' + str(np.ceil(np.pi*d/seedSpacing)) + '.')
@@ -28,11 +28,11 @@ orientOfL1 = 0.0
 orientOfL2 = np.pi/8.0
 
 # designate material properties, designate path to folder of wire properties
-PathFolderExpData = os.path.join(os.environ['ropemodels'], 'scripts', 'JiangModelForKW17S_393', 'wireMatProp')
+PathFolderExpData = os.path.join(workdir, 'wireMatProp')
 Filei = [
-    "lay0CalibatedMaterial.json",  # wire of 1st layer
-    "lay1CalibatedMaterial.json",  # wire of 2nd layer
-    "lay2CalibatedMaterial.json",  # wire of 3rd layer
+    "D1_1_17S.json",  # wire of 1st layer
+    "D2_1_17S.json",  # wire of 2nd layer
+    "D3_1_17S.json",  # wire of 3rd layer
          ]
 pathsToCalibratedData = [os.path.join(PathFolderExpData, Filei[i]) for i in range(len(Filei))]  # list of str
 materialNames = ["MaterialCore", "MaterialLayer1", "MaterialLayer2"]
